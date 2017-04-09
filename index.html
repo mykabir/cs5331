@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    body {
+        margin:0;
+    }
+
+    text {
+        font-family: sans-serif;
+        pointer-events: none;
+    }
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 160px;
+        height: 28px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        /*  pointer-events: none;	This line needs to be removed */
+
+    }
+</style>
+
+<!-- Include Twitter Bootstrap and jQuery: -->
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"/>
+<script type="text/javascript" src="bootstrap/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Including Jquery JS and CSS-->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+ <script>
+  jQuery(document).ready(function()
+{
+    $( "#accordion" ).accordion({
+      collapsible: true
+    });
+
+     $( "#tabs" ).tabs();
+});
+  </script>
+
+  <!-- D3 JS -->
+<script src="scripts/d3.v3.min.js"></script>
+<script src="scripts/underscore-min.js"></script>
+<link rel="stylesheet" type="text/css" href="styles/default.css"/>
+<link rel="stylesheet" href="bootstrap/css/bootstrap-multiselect.css" type="text/css"/>
+
+<!-- Include the plugin's CSS and JS: -->
+<script type="text/javascript" src="bootstrap/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="scripts/functions.js"></script>
+<script type="text/javascript" src="scripts/iDVLab.js"></script>
+
+<link rel="stylesheet" type="text/css" href="styles/style.css" media="screen"/>
+
+<script type="text/javascript">
+   // set the opacity to nil
+    $(document).ready(function () {
+        $('#slgenes').multiselect({
+          enableFiltering: true,
+            includeSelectAllOption: true,
+           maxHeight: 400,
+        });
+
+        $('#cancerid').multiselect({
+            enableFiltering: true,
+            includeSelectAllOption: true,
+            maxHeight: 400
+        });
+
+    });
+    function arrayContainsArray(superset, subset) {
+        return subset.every(function (value) {
+            return (superset.indexOf(value) >= 0);
+        });
+    }
+
+</script>
+<script>
+$(document).ready(function(){
+  $('.state .selected').css({
+    'fill': 'red'
+  });
+})
+</script>
+<body>
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Graph</a></li>
+    <li><a href="#tabs-2">Statistics</a></li>
+<!--     <li><a href="#tabs-3">Cluster</a></li> -->
+  </ul>
+  <div id="tabs-1">
+            <div id="container">
+
+                <div class="filterArea">
+                  <div id="selectBtn">
+                    <div id="study">
+                    <div id="genes">
+                        <div id="genesearch">                 
+                        <h4>Select Genes: </h4>
+                        <select id="slgenes" multiple >
+
+                        </select>
+                        </div>
+                      </div>
+                    </div>    
+                   </div>
+                   <div class="graphArea">
+                     <div id="cancer_bubble">
+                        <script>
+
+                        </script>
+                      </div>
+
+                      <div id="geneforce">
+                        <div class="clusterLink"><a href="./cluster.html"><button type="button" class="btn btn-primary">Show Community</button></a></div>
+                        
+                      </div>       
+                    </div>
+                </div>
+                    <div class="sideMenu">
+                      <div id="accordion">                         
+                          <h3>Graph properties</h3>
+                          <div>                           
+                            <ul>
+                              <li>Number of nodes: <label id="num_node"></label></li>
+                              <li>Number of links: <label id="num_link"></label></li>
+                              <li>Average node degree: <label id="lblavg_degree"></label></li>
+                              <li>Average shortest path len: <label id="lblavg_stpl"></label></li>
+                              <li>Graph diameter: <label id="lblgraph_diameter"></label></li>
+                              <!-- <li>Closeness Centrality</li> -->
+                            </ul>
+                          </div>
+                         <!--  <h3>Section 3</h3>
+                          <div>                           
+                            <ul>
+                              <li>List item one</li>
+                              <li>List item two</li>
+                              <li>List item three</li>
+                            </ul>
+                          </div> -->
+                        </div>
+
+                     </div>
+
+                 
+            </div>
+  </div>
+  <div id="tabs-2">
+    <p>
+        </p>
+  </div>
+<!--   <div id="tabs-3">
+    <iframe src="./cluster.html" width="1200" height="1000"></iframe>
+  </div> -->
+</div>
+
+
+
+
+
+<script>
+    DrawBublleChart();
+    UpdateGenesNetwork();
+    UpdateGraphProperties();
+ </script>
+
+</body>
