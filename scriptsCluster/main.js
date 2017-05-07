@@ -69,7 +69,7 @@ var svg_bar = d3.select("#treemap_bar").append("svg")
     .attr("width", wtree_b)
     .attr("height", height);
 //.attr("transform", "translate(" + [mtree_g.left, mtree_g.top] + ")");
-var color = d3.scaleOrdinal(d3.schemeCategory20b);
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 
 var simulation = d3.forceSimulation()
@@ -91,7 +91,7 @@ var bar_l1 = bar
     .classed('b', true)
     .data(bar_pos)
     .style("stroke-dasharray", "4, 2")
-    .style("stroke-width", "2px")
+    .style("stroke-width", ".5px")
     .attr("x1", function (d) {
         return d.x1;
     })
@@ -134,33 +134,14 @@ var radius = 6;
  >>>>>>> f41cb8646193b11f7aab076bf481cc71363c0550*/
 // d3.json("data/karate.json", function(error, graph) {
 d3.json("data/data.json", function (error, graph) {
-    // d3.json("data/dataset4_fix.json", function(error, graph) {
     if (error) throw error;
-    // for(var i=0;i<graph.links.length;i++){
-    //     console.log("G.add_edge("+graph.links[i].source+","+ graph.links[i].target+", weight="+ graph.links[i].value+")")
-    // }
 
-    // graph.links = graph.links.filter(function (d) {
-    //     if(d.value>1) return d;
-    // })
-    console.log("number of filtered links:" + graph.links.length)
-    var AV_W  = d3.mean(graph.links, function (d) {
-        return d.value;
-    })
-
-    console.log("Average weight: "+ AV_W);
-    var AV_DG = 2*graph.links.length/graph.nodes.length;
-    // console.log("Average node degree: "+ AV_DG);
-    // console.log("Threshold: "+ (Math.log(graph.nodes.length)/AV_DG ) + 1);
+console.log(graph);
 
     var num_n = graph.nodes.length;
-    var sample_properties = 1;
-    var alpha = Math.floor(num_n * sample_properties);
     var start_time = performance.now();
 //processing
-  //  var step = edge_betweenness_centrality(graph, k = num_n, normalized = false, weight = false, virtual = false);
-   // var step = _betweennness_virtual(graph);
-    var step = between_e(graph);
+   var step = edge_betweenness_centrality(graph, k = 'none', normalized = true, weight = true, virtual = false);
     var end_time_b = performance.now();
     var max_lv = step.length + 1;
 // tree
@@ -310,8 +291,8 @@ d3.json("data/data.json", function (error, graph) {
         .classed("x", true)
         .attr("fill", "none")
         .attr("stroke", "black")
-        .attr("stroke-width", "1.5px")
-        .attr("stroke-dasharray", "3 3");
+        .attr("stroke-width", "1")
+        .attr("stroke-dasharray", "1");
 
     /*svg_bar.append("rect")
      .attr("class", "overlay")
@@ -371,17 +352,16 @@ d3.json("data/data.json", function (error, graph) {
             return takeaname(d);
         });
 
-    simulation.force("charge", d3.forceManyBody().strength(-5));
+    simulation.force("charge", d3.forceManyBody().strength(-10));
     simulation
         .nodes(graph.nodes)
         .on("tick", ticked)
-        .velocityDecay(0.2)
-        .force("center", d3.forceCenter(wgroup / 4, hgroup / 4))
-        .force("x", d3.forceX().strength(.0005))
-        .force("y", d3.forceY().strength(.0005));
+        .velocityDecay(0.1)
+        .force("x", d3.forceX().strength(.005))
+        .force("y", d3.forceY().strength(.005));
 
     simulation.force("link")
-        .links(graph.links).distance(20);
+        .links(graph.links).distance(30);
 
     function ticked() {
         node

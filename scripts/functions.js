@@ -1,30 +1,42 @@
-var graph ;
+var graph;
+var betweenness;
+var colorGroup = d3.scale.category10()
 
 d3.json("data/data.json", function (error, data) {
     graph = data;
+ var linksArr = [];   
+       console.log(graph.nodes[0]);
+
+  for(var i =0; i<graph.links.length;i++){
+    linksArr.push(graph.links[i].source);
+    linksArr.push(graph.links[i].target);
+  }
+
+  var unique = linksArr.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+console.log(unique)
+var nodestest = [];
+    for(var j=0;j<graph.nodes.length;j++){
+            var count = 0;
+        for(k=0;k<unique.length;k++){
+            if(graph.nodes[j].id==unique[k]){
+                 count = 1;
+                break;
+            }
+            
+
+        }
+         if(count == 1){
+                nodestest.push(graph.nodes[j])
+            }
+    }
+
+    graph.nodes = nodestest;
+
+    
 })
 
-
-function UpdateGraphProperties(){
-    var avg_degree = average_node_degree(adjList());
-    var graph_diameter = diameter(adjList());
-    var avg_stpl = average_shortest_path_length(adjList());
-     $('#lblavg_degree').html(Number(avg_degree).toFixed(2));
-     $('#lblgraph_diameter').html(graph_diameter);
-     $('#num_node').html(graph.nodes.length);
-     $('#num_link').html(graph.links.length);
-     $('#lblavg_stpl').html(Number(avg_stpl).toFixed(2));
-}
-function MergeTwoArrarys(arr1, arr2) {
-    arr2.forEach(function (d) {
-        if (arr1.indexOf(d) < 0)
-            arr1.push(d);
-    });
-    return arr1;
-}
 function adjList() {
     var adjacencyList =[];
-    // console.log(graph);
     for(var i=0;i<graph.nodes.length;i++){
         adjacencyList[i]=[];
     }
@@ -46,11 +58,54 @@ function adjList() {
     return adjacencyList;
 
 }
+
+function UpdateGraphProperties(){
+    var avg_degree = average_node_degree(adjList());
+    var graph_diameter = diameter(adjList());
+    var avg_stpl = average_shortest_path_length(adjList());
+    console.log(edge_betweenness_centrality(adjList()));
+     $('#lblavg_degree').html(Number(avg_degree).toFixed(2));
+     $('#lblgraph_diameter').html(graph_diameter);
+     $('#num_node').html(graph.nodes.length);
+     $('#num_link').html(graph.links.length);
+     $('#lblavg_stpl').html(Number(avg_stpl).toFixed(2));
+
+
+    betweenness = betweenness_centrality(adjList());
+     console.log(betweenness);
+
+     for(var i=0;i<graph.nodes.length;i++){
+        if(betweenness[i])
+        graph.nodes[i].betweenness = betweenness[i];
+        else
+         graph.nodes[i].betweenness = 0;   
+     }
+
+    $('#lblavg_degree1').html(Number(avg_degree).toFixed(2));
+     $('#lblgraph_diameter1').html(graph_diameter);
+     $('#num_node1').html(graph.nodes.length);
+     $('#num_link1').html(graph.links.length);
+     $('#lblavg_stpl1').html(Number(avg_stpl).toFixed(2));
+     $('#betweenness').html(Number(avg_stpl).toFixed(2));
+
+
+ 
+
+     console.log(graph)
+}
+function MergeTwoArrarys(arr1, arr2) {
+    arr2.forEach(function (d) {
+        if (arr1.indexOf(d) < 0)
+            arr1.push(d);
+    });
+    return arr1;
+}
+
 function DrawBublleChart() {
 
     var proteindata = [];
     var diameter = 400, //max size of the bubbles
-        color = d3.scale.category20b(); //color category
+        color = d3.scale.category10(); //color category
     var toggle = 0;
     var bubble = d3.layout.pack()
         .sort(null)
@@ -144,43 +199,6 @@ function DrawBublleChart() {
             "width": "40px"
         })
 
-
-    //      //create the bubbles
-    // bubbles.append("circle")
-    //     .attr("r", function (d) {
-    //         return d.r;
-    //     })
-    //     .attr("cx", function (d) {
-    //         return d.x;
-    //     })
-    //     .attr("cy", function (d) {
-    //         return d.y;
-    //     })
-    //     .style("fill", function (d, i) {
-    //         return color(i);
-    //     })
-    //     .attr("class", "state")
-
-
-    // bubbles.append("text")
-    //     .attr("x", function (d) {
-    //         return d.x;
-    //     })
-    //     .attr("y", function (d) {
-    //         return d.y + 5;
-    //     })
-    //     .attr("text-anchor", "middle")
-    //     .html(function (d) {
-    //         return (d.name.substring(0, d.r / 3));
-    //         // return d.name;
-    //     })
-    //     .style({
-    //         "fill": "white",
-    //         "font-family": "Arial",
-    //         "font-size": "12px",
-    //         "width": "40px"
-    //     })
-
 }
 function UpdateGenesNetwork() {
 
@@ -208,6 +226,10 @@ function UpdateGenesNetwork() {
 
     var highlight_color = "blue";
     var highlight_trans = 0.1;
+
+    var sizeCir = d3.scale.linear()
+                    .domain([0,1])
+                    .range([200,2000]);
 
     var size = d3.scale.pow().exponent(1)
         .domain([1, 100])
@@ -246,10 +268,26 @@ function UpdateGenesNetwork() {
         }
     }
 
+    var nodeids=[], linksid=[];
+    graph.nodes.forEach(function (d) {
+        nodeids.push(d.id);
+    });
+    graph.links.forEach(function (d) {
+        linksid.push({"source":d.source,"target":d.target,"weight":1})
+    });
+
+    var community = jLouvain().nodes(nodeids).edges(linksid)();
+    graph.nodes.forEach(function (d) {
+        d.community = community[d.id];
+    });
+
     force
         .nodes(graph.nodes)
         .links(graph.links)
         .start();
+
+
+
     function update(nodes, links) {
         var linkedByIndex = {};
         links.forEach(function (d) {
@@ -282,7 +320,6 @@ function UpdateGenesNetwork() {
             .data(nodes)
             .enter().append("g")
             .attr("class", "node")
-
             .call(force.drag)
 
 
@@ -302,24 +339,14 @@ function UpdateGenesNetwork() {
             towhite = "fill"
         }
         var circle = node.append("path").attr("class", "circle_path")
-
-
             .attr("d", d3.svg.symbol()
                 .size(340)
                 .type(function (d) {
                     return d.type;
                 }))
 
-            .style(tocolor, function (d) {
-                if (d.type == "circle")
-                    return "red";
-                else if (d.type == "diamond")
-                    return "blue";
-                else if (d.type == "square")
-                    return "gray";
-                else {
-                    return "#8856a7";
-                }
+            .style("fill", function (d) {
+               return colorGroup(d.community);
             })
             .style("stroke-width", nominal_stroke)
             .style(towhite, "white");
@@ -452,8 +479,9 @@ function UpdateGenesNetwork() {
             var base_radius = nominal_base_node_size;
             if (nominal_base_node_size * zoom.scale() > max_base_node_size) base_radius = max_base_node_size / zoom.scale();
             circle.attr("d", d3.svg.symbol()
-                .size(function (d) {
-                    return Math.PI * Math.pow(size(d.size) * base_radius / nominal_base_node_size || base_radius, 2);
+                .size(function(d) {
+                    // console.log(d);
+                    return sizeCir(d.betweenness);
                 })
                 .type(function (d) {
                     return d.type;

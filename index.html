@@ -49,6 +49,7 @@
   <!-- D3 JS -->
 <script src="scripts/d3.v3.min.js"></script>
 <script src="scripts/underscore-min.js"></script>
+<script src="scripts/jLouvain.js"></script>
 <link rel="stylesheet" type="text/css" href="styles/default.css"/>
 <link rel="stylesheet" href="bootstrap/css/bootstrap-multiselect.css" type="text/css"/>
 
@@ -154,8 +155,18 @@ $(document).ready(function(){
             </div>
   </div>
   <div id="tabs-2">
-    <p>
-        </p>
+    <h3>Graph properties</h3>
+                          <div>                           
+                            <ul>
+                              <li>Number of nodes: <label id="num_node1"></label></li>
+                              <li>Number of links: <label id="num_link1"></label></li>
+                              <li>Average node degree: <label id="lblavg_degree1"></label></li>
+                              <li>Average shortest path len: <label id="lblavg_stpl1"></label></li>
+                              <li>Graph diameter: <label id="lblgraph_diameter1"></label></li>
+                              <li>Btweenness Centrality: <label id="betweenness"></label></li>
+                              <!-- <li>Closeness Centrality</li> -->
+                            </ul>
+                          </div>
   </div>
 <!--   <div id="tabs-3">
     <iframe src="./cluster.html" width="1200" height="1000"></iframe>
@@ -170,6 +181,10 @@ $(document).ready(function(){
     DrawBublleChart();
     UpdateGenesNetwork();
     UpdateGraphProperties();
+    console.log(graph.links)
+
+
+
  </script>
 
 </body>

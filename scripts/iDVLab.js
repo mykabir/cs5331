@@ -1,5 +1,16 @@
 /**
  * Created by vinhtngu on 2/24/17.
+ * G: is the adjancency list
+ * s,source = node
+ * adjmatrix: adjacency matrix
+ * community: dictionary of community where keys are nodes and values are communities
+ */
+
+
+/**
+ * @param G: adjacency list
+ * @param source: node
+ * @returns {Object}: distance from source to other nodes
  */
 function single_source_shortest_path_length(G, source) {
     var seen = new Object();
@@ -138,6 +149,8 @@ function _single_source_shortest_path_basic(G, s) {
     }
     return [S, P, sigma];
 }
+
+
 function _accumulate_edges(betweenness, S, P, sigma, s) {
     var delta = new Object();
     for (var i = 0; i < S.length; i++) {
@@ -163,6 +176,7 @@ function _accumulate_edges(betweenness, S, P, sigma, s) {
     }
     return betweenness;
 }
+//@graph is adjancey list by index
 function betweenness_centrality(G) {
     var betweenness = new Object();
     for (var i = 0; i < G.length; i++) {
@@ -176,8 +190,9 @@ function betweenness_centrality(G) {
     betweenness = _rescale(betweenness, G.length);
     return betweenness;
 }
+
 function _rescale(betweenness, n) {
-    var scale = 1.0 / ((n - 1) * (n - 2));
+    var scale = 2.0 / ((n - 1) * (n - 2));
     for (var v in betweenness) {
         betweenness[v] *= scale;
     }
@@ -185,7 +200,7 @@ function _rescale(betweenness, n) {
 }
 function _accumulate_basic(betweenness, S, P, sigma, s) {
     var delta = new Object();
-    for (var i = 0; i < S.length; i++) {
+    for (var i = 0; i < Object.keys(betweenness).length; i++) {
         delta[i] = 0.0
     }
     while (S.length > 0) {
@@ -208,16 +223,16 @@ function average_node_degree(G) {
     });
 
 }
-function average_shortest_path_length(G){
-    var avg=0.0;
-    for(var n=0;n<G.length;n++){
-        var path_length = single_source_shortest_path_length(G,n);
-        avg += d3.sum(Object.values (path_length), function (d) {
+function average_shortest_path_length(G) {
+    var avg = 0.0;
+    for (var n = 0; n < G.length; n++) {
+        var path_length = single_source_shortest_path_length(G, n);
+        avg += d3.sum(Object.values(path_length), function (d) {
             return d;
         })
     }
     var n = G.length;
-    return avg/(n*(n-1));
+    return avg / (n * (n - 1));
 
 }
 function _accumulate_edges(betweenness, S, P, sigma, s) {
@@ -245,6 +260,7 @@ function _accumulate_edges(betweenness, S, P, sigma, s) {
     }
     return betweenness;
 }
+
 function edge_betweenness_centrality(G) {
     var edge_betweenness = new Object();
     for (var r = 0; r < G.length; r++) {
@@ -254,7 +270,7 @@ function edge_betweenness_centrality(G) {
             if (edge_betweenness.hasOwnProperty(p2)) {
                 continue;
             } else {
-                edge_betweenness[(p1)] =0;
+                edge_betweenness[(p1)] = 0;
             }
         }
     }
@@ -275,4 +291,87 @@ function _rescale_e(edge_betweenness, n) {
         edge_betweenness[v] *= scale;
     }
     return edge_betweenness;
+}
+
+/**Modularity function created on March 9, 2017 by vinhtngu
+ * @param partition: community array where index is the community and array values are nodes
+ * @param adjmatrix: adjacency matrix
+ * @returns {number}: Q modularity values
+ */
+function modularity(partition, adjmatrix) {
+    var Q_modularity = 0;
+    var numNode = adjmatrix.length;
+    var num2xlinks = 0;
+    adjmatrix.forEach(function (d) {
+        num2xlinks += d3.sum(d, function (e) {
+            return e;
+        })
+    });
+    partition.forEach(function (d, i) {
+        var in2xlinks = 0;
+        var indegre = 0;
+        d.forEach(function (a) {
+            d.forEach(function (b) {
+                if (b !== a) {
+                    in2xlinks += adjmatrix[a][b];
+                }
+            })
+            indegre += d3.sum(adjmatrix[a], function (f) {
+                return f;
+            })
+        })
+        var inlink = in2xlinks / 2;
+        Q_modularity += inlink * 2 / num2xlinks - Math.pow(indegre / num2xlinks, 2);
+    });
+    return Q_modularity;
+}
+/**Function to create adjacency matrix
+ *
+ * @param graph with nodes and links
+ * @return adjacencymatrix
+ */
+
+function create_adjmatrix(graph) {
+    var adjmatrix = [];
+    var n = graph.nodes.length;
+
+    for (var i = 0; i < n; i++) { //Initialize empty matrix
+        var arr = [];
+        for (var j = 0; j < n; j++) {
+            arr.push(0);
+        }
+        adjmatrix.push(arr)
+    }//End of initialization
+
+    graph.links.forEach(function (l) {
+        var sindex = graph.nodes.findIndex(x => x.id == l.source.id
+        )
+        ;
+        var tindex = graph.nodes.findIndex(x => x.id == l.target.id
+        )
+        ;
+        adjmatrix[sindex][tindex] = 1;
+        adjmatrix[tindex][sindex] = 1;
+    })
+    return adjmatrix;
+}
+
+function create_adjacencylist(graph) {
+    var adjlist =[];
+    var n = graph.nodes.length;
+    for(var i=0;i<n;i++){
+        adjlist[i]=[];
+    }
+    graph.links.forEach(function (l) {
+        var sindex = graph.nodes.findIndex(x => x.id == l.source.id
+        )
+        ;
+        var tindex = graph.nodes.findIndex(x => x.id == l.target.id
+        )
+        ;
+        adjlist[sindex].push(tindex);
+        adjlist[tindex].push(sindex);
+    })
+
+    return adjlist;
 }

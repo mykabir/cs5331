@@ -2,7 +2,8 @@
 <meta charset="utf-8">
 <style>
 .axis {
-  font: 10px sans-serif;
+  font-size: 8px;
+  font-family: 'sans-serif';
 }
 .axis path,
 .axis line {
@@ -13,21 +14,22 @@
 .axis.axis--x line,
 .axis.axis--x path {
   stroke: #000;
-  stroke-width:1px;
+  stroke-width:.6px;
 }
 
 .axis.axis--x path {
-  stroke-width:3px;
+  stroke-width:.6px;
 }
 
 .graph {
   fill: none;
   stroke: black;
-  stroke-width: 1.5px;
+  stroke-width: .6px;
 }
 .graph-title{
-  font: 12px sans-serif;
-  font-weight: bold;
+  font-size:10px;
+  font-family: 'sans-serif';
+  /*font-weight: bold;*/
   fill: steelblue;
 }
 .links line {
@@ -37,12 +39,12 @@
 
 .nodes circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
 
 .node circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
 
 .nodes text {
@@ -51,7 +53,7 @@
 
 .node--internal circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
 
 .node--internal text {
@@ -61,7 +63,7 @@
   fill: none;
   
   stroke-opacity: 1;
-  stroke-width: 1.5px;
+  stroke-width: .5px;
 }
 
 .bar line {
@@ -164,37 +166,19 @@
   z-index: 0;
 }
 </style>
-
-<!-- Include Twitter Bootstrap and jQuery: -->
-<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" type="text/css"/>
-<script type="text/javascript" src="bootstrap/js/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-
-<!-- Including Jquery JS and CSS-->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-<link rel="stylesheet" type="text/css" href="styles/default.css"/>
-<link rel="stylesheet" href="bootstrap/css/bootstrap-multiselect.css" type="text/css"/>
-<link rel="stylesheet" type="text/css" href="styles/style.css" media="screen"/>
-
 <body>
-
-  <div id="container" class = "container">
-    <a href="/cs5331/"><button type="button" class="btn btn-primary">Back to network</button></a>
-    <div div id="treemap"  class="treemap">
-      <div div id="treemap_main"  class="treemap_main">
-        <div div id="treemap_graph"  class="treemap_graph">
-        </div>
-
+<div id="container" class = "container">
+  <div div id="treemap"  class="treemap">
+    <div div id="treemap_main"  class="treemap_main">
+      <div div id="treemap_graph"  class="treemap_graph">
       </div>
-      <div div id="treemap_bar"  class="treemap_bar">
-      </div>
+
     </div>
+    <div div id="treemap_bar"  class="treemap_bar">
+    </div>
+  </div>
 
-  </div> 
-
+</div>   
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="scriptsCluster/math_script.js"></script>
   <script src="scriptsCluster/underscore-min.js"></script>

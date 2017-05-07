@@ -237,3 +237,6 @@ p{
 .treemap a{
   float: right;
 }
+.selected{
+  opacity: .5;
+}
